@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell Bee Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐝 Spell Bee Challenge</h1>
+            <div class="score-board">
+                <span>Score: <span id="score">0</span></span>
+                <span>Word: <span id="current-word">1</span> / <span id="total-words">50</span></span>
+                <span>Game Time: <span id="game-timer">00:00</span></span>
+                <span>Word Time: <span id="word-timer">30</span>s</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="setup-area" id="setup-area">
+                <h2>Game Setup</h2>
+                <div class="setup-section">
+                    <label for="word-list-input">Custom Word List (optional):</label>
+                    <textarea id="word-list-input" placeholder="Enter words separated by commas or new lines..."></textarea>
+                    <p class="help-text">Leave empty to use default 50 words</p>
+                </div>
+                
+                <div class="setup-section">
+                    <label for="word-time-setting">Time per word (seconds):</label>
+                    <input type="number" id="word-time-setting" min="5" max="300" value="30">
+                </div>
+                
+                <div class="setup-section">
+                    <label>
+                        <input type="checkbox" id="random-order" checked> Randomize word order
+                    </label>
+                </div>
+                
+                <button id="start-game" class="start-btn">Start Spell Bee 🐝</button>
+            </div>
+
+            <div class="game-area" id="game-area" style="display: none;">
+                <div class="word-display">
+                    <button id="play-word" class="play-btn">🔊 Play Word</button>
+                    <div id="definition" class="definition"></div>
+                </div>
+
+                <div class="input-area">
+                    <input type="text" id="spelling-input" placeholder="Type the spelling here..." autocomplete="off">
+                    <button id="submit-btn">Submit</button>
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <div class="controls">
+                    <button id="hint-btn" class="hint-btn">💡 Hint</button>
+                    <button id="skip-btn" class="skip-btn">⏭️ Skip</button>
+                </div>
+            </div>
+
+            <div class="game-over" id="game-over" style="display: none;">
+                <h2>Game Complete!</h2>
+                <p>Final Score: <span id="final-score"></span> / <span id="final-total"></span></p>
+                <p>Total Time: <span id="final-time"></span></p>
+                <button id="restart-btn">Play Again</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
