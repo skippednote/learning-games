@@ -23,6 +23,7 @@ let timerBarInterval = null;
 let openaiApiKey = '';
 let gameCompleted = false;
 let allWordsCompleted = false;
+let openaiValidationResults = null;
 
 // Sound system
 const audioContext = typeof AudioContext !== 'undefined' ? new AudioContext() : null;
@@ -102,6 +103,7 @@ const elements = {
     validateBtn: document.getElementById('validate-btn'),
     validationStatus: document.getElementById('validation-status'),
     manualControls: document.getElementById('manual-controls'),
+    nextWordBtn: document.getElementById('next-word-btn'),
     revealBtn: document.getElementById('reveal-btn'),
     finishPaperBtn: document.getElementById('finish-paper-btn'),
     timerBar: document.getElementById('timer-bar'),
@@ -119,6 +121,8 @@ const elements = {
     finalScoreDisplay: document.getElementById('final-score'),
     finalTotalDisplay: document.getElementById('final-total'),
     finalTimeDisplay: document.getElementById('final-time'),
+    openaiResults: document.getElementById('openai-results'),
+    openaiDetails: document.getElementById('openai-details'),
     restartBtn: document.getElementById('restart-btn'),
     definitionDiv: document.getElementById('definition')
 };
@@ -190,10 +194,14 @@ function startGame() {
         elements.finishPaperBtn.style.display = 'inline-block'; // Show finish button from start
         // Hide hint button in paper mode since students write on paper
         elements.hintBtn.style.display = 'none';
+        // Show next word button in paper mode
+        elements.nextWordBtn.style.display = 'inline-block';
     } else {
         elements.inputArea.style.display = 'block';
         elements.paperModeArea.style.display = 'none';
         elements.hintBtn.style.display = 'inline-block';
+        // Hide next word button in normal mode
+        elements.nextWordBtn.style.display = 'none';
     }
     
     startGameTimer();
@@ -346,6 +354,25 @@ function paperWordTimeExpired() {
     }
 }
 
+function paperNextWord() {
+    // Skip the timer and go to next word immediately in paper mode
+    if (isPaperMode) {
+        clearInterval(wordTimer);
+        clearInterval(timerBarInterval);
+        
+        currentWordIndex++;
+        
+        if (currentWordIndex >= words.length) {
+            allWordsCompleted = true;
+            elements.finishPaperBtn.style.display = 'inline-block';
+            elements.feedback.textContent = 'All words completed! Click "Finished Writing" to upload your photo.';
+            elements.feedback.className = 'feedback correct';
+        } else {
+            updateDisplay();
+        }
+    }
+}
+
 function showHint() {
     if (hintsUsed === 0) {
         const word = words[currentWordIndex];
@@ -449,6 +476,7 @@ function showPhotoUploadSection() {
     elements.photoUploadSection.style.display = 'block';
     elements.finishPaperBtn.style.display = 'none';
     elements.revealBtn.style.display = 'none';
+    elements.nextWordBtn.style.display = 'none';
     
     console.log('Photo upload section should now be visible');
 }
@@ -649,6 +677,7 @@ IMPORTANT: Respond ONLY with valid JSON in this exact format (no other text):
             }
             
             score = validation.totalCorrect;
+            openaiValidationResults = validation; // Store results for game completion screen
             
             elements.validationStatus.innerHTML = `
                 <strong>AI Validation Complete!</strong><br>
@@ -773,6 +802,35 @@ function endGame() {
     elements.finalScoreDisplay.textContent = score;
     elements.finalTotalDisplay.textContent = words.length;
     elements.finalTimeDisplay.textContent = formatTime(totalTime);
+    
+    // Show OpenAI validation results if available (from paper mode)
+    if (openaiValidationResults && isPaperMode) {
+        elements.openaiResults.style.display = 'block';
+        elements.openaiDetails.innerHTML = `
+            <div style="text-align: left; margin-top: 10px;">
+                <p><strong>AI Analysis Summary:</strong></p>
+                <p>✅ Correct: ${openaiValidationResults.totalCorrect} words</p>
+                <p>❌ Incorrect: ${openaiValidationResults.totalWords - openaiValidationResults.totalCorrect} words</p>
+                <details style="margin-top: 15px;">
+                    <summary><strong>Detailed Word-by-Word Results</strong></summary>
+                    <div style="margin-top: 10px;">
+                        ${openaiValidationResults.results.map((r, index) => 
+                            `<div style="margin: 8px 0; padding: 8px; background: ${r.correct ? '#d4edda' : '#f8d7da'}; border-radius: 5px; border-left: 4px solid ${r.correct ? '#28a745' : '#dc3545'};">
+                                <div style="font-weight: bold;">#${index + 1} - "${r.word}"</div>
+                                <div style="margin-top: 4px;">
+                                    Status: ${r.correct ? '✅ Correct' : '❌ Incorrect'}
+                                    ${r.written !== r.word ? `<br>You wrote: "${r.written}"` : ''}
+                                </div>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </details>
+            </div>
+        `;
+    } else {
+        elements.openaiResults.style.display = 'none';
+    }
+    
     elements.gameOverDiv.style.display = 'block';
     elements.gameArea.style.display = 'none';
 }
@@ -792,6 +850,7 @@ function restartGame() {
     gameCompleted = false;
     allWordsCompleted = false;
     openaiApiKey = '';
+    openaiValidationResults = null;
     
     // Clear photo data
     if (window.uploadedImageData) {
@@ -832,6 +891,7 @@ elements.endTestBtn.addEventListener('click', endTestEarly);
 elements.restartBtn.addEventListener('click', restartGame);
 
 // Paper mode event listeners
+elements.nextWordBtn.addEventListener('click', paperNextWord);
 elements.revealBtn.addEventListener('click', revealAnswer);
 elements.finishPaperBtn.addEventListener('click', finishPaperMode);
 

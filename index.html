@@ -99,6 +99,7 @@
                     </div>
                     
                     <div class="manual-controls" id="manual-controls">
+                        <button id="next-word-btn" class="paper-btn next-btn">➡️ Next Word</button>
                         <button id="reveal-btn" class="paper-btn reveal-btn">👁️ Reveal Answer</button>
                         <button id="finish-paper-btn" class="paper-btn finish-btn" style="display: none;">✅ Finished Writing - Upload Photo</button>
                     </div>
@@ -117,6 +118,10 @@
                 <h2>Game Complete!</h2>
                 <p>Final Score: <span id="final-score"></span> / <span id="final-total"></span></p>
                 <p>Total Time: <span id="final-time"></span></p>
+                <div id="openai-results" class="openai-results" style="display: none;">
+                    <h3>AI Validation Results</h3>
+                    <div id="openai-details"></div>
+                </div>
                 <button id="restart-btn">Play Again</button>
             </div>
         </main>
