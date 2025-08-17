@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python3:*)",
       "Bash(git init:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
     ],
     "defaultMode": "acceptEdits"
   }

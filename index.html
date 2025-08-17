@@ -24,7 +24,13 @@
                 <div class="setup-section">
                     <label for="word-list-input">Custom Word List (optional):</label>
                     <textarea id="word-list-input" placeholder="Enter words separated by commas or new lines..."></textarea>
-                    <p class="help-text">Leave empty to use default 50 words</p>
+                    <p class="help-text">Leave empty to use default words</p>
+                </div>
+                
+                <div class="setup-section">
+                    <label for="question-limit">Number of questions (for default word list):</label>
+                    <input type="number" id="question-limit" min="1" max="50" value="50">
+                    <p class="help-text">Choose how many words from the default list (1-50)</p>
                 </div>
                 
                 <div class="setup-section">
@@ -32,9 +38,21 @@
                     <input type="number" id="word-time-setting" min="5" max="300" value="30">
                 </div>
                 
+                <div class="setup-section" id="api-key-section" style="display: none;">
+                    <label for="openai-api-key">OpenAI API Key (for photo validation):</label>
+                    <input type="password" id="openai-api-key" placeholder="sk-..." autocomplete="off">
+                    <p class="help-text">Required for paper mode photo validation. Your key stays in your browser only.</p>
+                </div>
+                
                 <div class="setup-section">
                     <label>
                         <input type="checkbox" id="random-order" checked> Randomize word order
+                    </label>
+                </div>
+                
+                <div class="setup-section">
+                    <label>
+                        <input type="checkbox" id="paper-mode"> Paper mode (write on paper instead of typing)
                     </label>
                 </div>
                 
@@ -47,9 +65,43 @@
                     <div id="definition" class="definition"></div>
                 </div>
 
-                <div class="input-area">
-                    <input type="text" id="spelling-input" placeholder="Type the spelling here..." autocomplete="off">
+                <div class="timer-bar-container">
+                    <div class="timer-bar" id="timer-bar"></div>
+                    <div class="timer-text" id="timer-text">30s</div>
+                </div>
+
+                <div class="input-area" id="input-area">
+                    <input type="text" id="spelling-input" placeholder="Type the spelling here..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
                     <button id="submit-btn">Submit</button>
+                </div>
+
+                <div class="paper-mode-area" id="paper-mode-area" style="display: none;">
+                    <div class="paper-instructions" id="paper-instructions">
+                        <p>📝 Write the spelling on paper</p>
+                        <p>Word <span id="word-counter">1</span> of <span id="total-counter">50</span></p>
+                    </div>
+                    
+                    <div class="photo-upload-section" id="photo-upload-section" style="display: none;">
+                        <div class="upload-instructions">
+                            <p>📸 Take a photo of all your written spellings</p>
+                            <p>Make sure all words are clearly visible and readable</p>
+                        </div>
+                        <div class="upload-controls">
+                            <input type="file" id="photo-input" accept="image/*" capture="environment" style="display: none;">
+                            <button id="camera-btn" class="photo-btn">📷 Take Photo</button>
+                            <button id="upload-btn" class="photo-btn">📁 Upload Photo</button>
+                        </div>
+                        <div id="photo-preview" class="photo-preview" style="display: none;"></div>
+                        <div class="validation-controls" id="validation-controls" style="display: none;">
+                            <button id="validate-btn" class="validate-btn">🤖 Validate with AI</button>
+                            <div id="validation-status" class="validation-status"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="manual-controls" id="manual-controls">
+                        <button id="reveal-btn" class="paper-btn reveal-btn">👁️ Reveal Answer</button>
+                        <button id="finish-paper-btn" class="paper-btn finish-btn" style="display: none;">✅ Finished Writing - Upload Photo</button>
+                    </div>
                 </div>
 
                 <div class="feedback" id="feedback"></div>
@@ -57,6 +109,7 @@
                 <div class="controls">
                     <button id="hint-btn" class="hint-btn">💡 Hint</button>
                     <button id="skip-btn" class="skip-btn">⏭️ Skip</button>
+                    <button id="end-test-btn" class="end-test-btn">🏁 End Test</button>
                 </div>
             </div>
 
